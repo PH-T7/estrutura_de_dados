@@ -1,0 +1,57 @@
+package GameMemorizacao;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Tela extends javax.swing.JFrame {
+
+    private GerenciadorDeJogo gerenciadorDeJogo;
+    
+    public Tela() {
+        initComponents();
+        gerenciadorDeJogo = new GerenciadorDeJogo();
+    }
+
+    private void btoIniciarActionPerformed(java.awt.event.ActionEvent evt) {
+        String dificuldade = jComboBox1.getSelectedItem().toString();
+        gerenciadorDeJogo.definirDificuldade(dificuldade);
+        gerenciadorDeJogo.gerarSequencia();
+        rodadaIniciada(true);
+
+        JButton[] meusBotoes = {bto1, bto2, bto3, bto4, bto5, bto6, bto7, bto8, bto9};
+        gerenciadorDeJogo.exibirSequencia(meusBotoes, () -> {
+            JOptionPane.showMessageDialog(rootPane, "Agora é sua vez!");
+        });
+    }
+
+    private void bto1MouseClicked(java.awt.event.MouseEvent evt) {
+        gerenciadorDeJogo.registrarEntrada(1);
+        verificarEntrada();
+    }
+
+    private void bto2MousePressed(java.awt.event.MouseEvent evt) {
+        gerenciadorDeJogo.registrarEntrada(2);
+        verificarEntrada();
+    }
+
+    // Método para verificar a sequência do jogador
+    private void verificarEntrada() {
+        if (gerenciadorDeJogo.verificarSequencia()) {
+            JOptionPane.showMessageDialog(rootPane, "Sequência correta! Pontuação: " + gerenciadorDeJogo.getPontuacao());
+            gerenciadorDeJogo.gerarSequencia();
+            JButton[] meusBotoes = {bto1, bto2, bto3, bto4, bto5, bto6, bto7, bto8, bto9};
+            gerenciadorDeJogo.exibirSequencia(meusBotoes, () -> {
+                JOptionPane.showMessageDialog(rootPane, "Agora é sua vez!");
+            });
+        } else if (gerenciadorDeJogo.getRodada() > 1) {
+            JOptionPane.showMessageDialog(rootPane, "Game Over! Pontuação final: " + gerenciadorDeJogo.getPontuacao());
+            rodadaIniciada(false);
+            gerenciadorDeJogo.resetarJogo();
+        }
+    }
+
+    private void rodadaIniciada(boolean estado) {
+        btoIniciar.setEnabled(!estado);
+    }
+}
