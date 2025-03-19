@@ -1,0 +1,84 @@
+package GameMemorizacao;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+public class GerenciadorDeJogo {
+    private List<Integer> sequencia; // Armazena a sequência correta
+    private List<Integer> entradaJogador; // Armazena a entrada do jogador
+    private int pontuacao;
+    private int rodada;
+    private int tempoExibicao; // Tempo de exibição com base na dificuldade
+
+    public GerenciadorDeJogo() {
+        this.sequencia = new ArrayList<>();
+        this.entradaJogador = new ArrayList<>();
+        this.pontuacao = 0;
+        this.rodada = 1;
+    }
+
+    // Define a dificuldade e ajusta o tempo de exibição
+    public void definirDificuldade(String dificuldade) {
+        switch (dificuldade) {
+            case "Fácil":
+                this.tempoExibicao = 1000;
+                break;
+            case "Médio":
+                this.tempoExibicao = 700;
+                break;
+            case "Difícil":
+                this.tempoExibicao = 400;
+                break;
+        }
+    }
+
+    // Gera uma nova sequência aleatória
+    public void gerarSequencia() {
+        Random rand = new Random();
+        sequencia.add(rand.nextInt(9) + 1); // Adiciona um número entre 1 e 9
+    }
+
+    // Exibe a sequência para o jogador
+    public void exibirSequencia(JButton[] botoes, Runnable callback) {
+        JButton[] botoesSelecionados = new JButton[sequencia.size()];
+        for (int i = 0; i < sequencia.size(); i++) {
+            botoesSelecionados[i] = botoes[sequencia.get(i) - 1]; // Pega o botão correspondente
+        }
+        PintarBotoes.piscarBotoes(botoesSelecionados, tempoExibicao, callback);
+    }
+
+    // Registra a entrada do jogador
+    public void registrarEntrada(int numeroBotao) {
+        entradaJogador.add(numeroBotao);
+    }
+
+    // Verifica se a sequência do jogador está correta
+    public boolean verificarSequencia() {
+        if (entradaJogador.equals(sequencia)) {
+            pontuacao += rodada * 10; // Pontuação aumenta conforme a rodada
+            rodada++;
+            entradaJogador.clear();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public int getPontuacao() {
+        return pontuacao;
+    }
+
+    public int getRodada() {
+        return rodada;
+    }
+
+    public void resetarJogo() {
+        sequencia.clear();
+        entradaJogador.clear();
+        pontuacao = 0;
+        rodada = 1;
+    }
+}
